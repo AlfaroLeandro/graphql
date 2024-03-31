@@ -1,8 +1,12 @@
 package com.vinsguru.graphqlplayground.sec01.lec04.service;
 
+import com.vinsguru.graphqlplayground.sec01.lec04.dto.Customer;
 import com.vinsguru.graphqlplayground.sec01.lec04.dto.CustomerOrderDTO;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +33,31 @@ public class OrderService {
     }
 
     public Flux<List<CustomerOrderDTO>> ordersByCustomerName(List<String> names) {
+//        return Flux.fromIterable(names)
+//                .map(n -> map.getOrDefault(n, Collections.emptyList()));
+
+//        return Flux.fromIterable(names) --> ERROR, DEVUELVE SOLO 2 ITEMS Y ESPERA 4 (TOTAL DE CUSTOMERS)
+//                .flatMap(this::fetchOrders);
+
+//        return Flux.fromIterable(names) --> ERROR, DEVUELVE LAS ORDENES MEZCLADAS (NO CORRESPONDEN A SU CUSTOMER)
+//                .flatMap(n -> fetchOrders(n).defaultIfEmpty(Collections.emptyList()));
+
         return Flux.fromIterable(names)
-                .map(n -> map.getOrDefault(n, Collections.emptyList()));
+                .flatMapSequential(n -> fetchOrders(n).defaultIfEmpty(Collections.emptyList()));
+    }
+
+    //algun recurso externo
+    private Mono<List<CustomerOrderDTO>> fetchOrders(String name) {
+        return Mono.justOrEmpty(map.get(name));
+    }
+
+    public Mono<Map<Customer, List<CustomerOrderDTO>>> fetchCustomersAsMap(List<Customer> customers) {
+        return Flux.fromIterable(customers)
+                .map(c -> Tuples.of(c, map.getOrDefault(c.name(), Collections.emptyList())))
+                .collectMap(
+                        Tuple2::getT1,
+                        Tuple2::getT2
+                );
     }
 
 }
