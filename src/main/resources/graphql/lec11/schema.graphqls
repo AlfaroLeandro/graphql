@@ -1,21 +1,15 @@
 type Query {
-    products: [Product]
+    search: [Result]
 }
 
-interface Product {
-    id: ID!
-    description: String
-    price: Int
-}
+union Result = Fruit | Electronics | Book
 
-type Fruit implements Product {
-    id: ID!
+type Fruit {
     description: String
-    price: Int
     expiryDate: String
 }
 
-type Electronics implements Product {
+type Electronics  {
     id: ID!
     description: String
     price: Int
@@ -27,9 +21,7 @@ enum Brand {
     SAMSUNG
 }
 
-type Book implements Product {
-    id: ID!
-    description: String
-    price: Int
+type Book {
+    title: String
     author: String
 }
