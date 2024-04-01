@@ -3,7 +3,7 @@ package com.vinsguru.graphqlplayground;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.vinsguru.graphqlplayground.sec01.lec05")
+@SpringBootApplication(scanBasePackages = "com.vinsguru.graphqlplayground.lec06")
 public class GraphqlPlaygroundApplication {
 
 	public static void main(String[] args) {
